@@ -7,9 +7,30 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.css">
   </head>
   <body>
-  	<div id="app">
-  		
-  	</div>
+  	<section class="hero is-info is-fullheight" id="app">
+  		<div class="hero-head">
+  			<nav class="navbar">
+  				<div class="container">
+  					<div class="navbar-brand">
+  						<a class="navbar-item">
+  							Vue To Do
+  						</a>
+  					</div>
+  					<div class="navbar-menu">
+  						<div class="navbar-end">
+  							<router-link class="navbar-item" to="/" exact>Log In
+  							</router-link>	
+  							<router-link class="navbar-item" to="/tasks">Tasks
+  							</router-link>
+  						</div>
+  					</div>
+  				</div>
+  			</nav>
+  		</div>
+		<div class="hero-body">
+			<router-view></router-view>
+  		</div>
+  	</section>
   	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="/dist/build.js"></script>
   </body>

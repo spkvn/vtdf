@@ -1,8 +1,11 @@
-import Vue from 'vue'
-import App from './App.vue'
-import Login from "./components/Login.vue"
+import Vue from 'vue';
+import VueRouter from 'vue-router';
+import axios from 'axios';
+import router from './routes.js';
+import App from './App.vue';
+Vue.use(VueRouter);
 
 new Vue({
   el: '#app',
-  render: h => h(Login)
+  router : router
 })
