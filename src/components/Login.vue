@@ -34,11 +34,21 @@ export default {
 				"email" : this.email,
 				"password" : this.password
 			})
-			.then(function(data){
-				console.log("Sucess")
-			}).catch(function(data){
+			.then(function(response){
+				this.saveUser(response.data.data);
+				this.$router.push('/tasks');
+			}.bind(this)).catch(function(err){
 				console.log("Failure");
+				console.log(err);
 			})
+		},
+		saveUser (data) {
+			window.user = {
+				name  : data.name,
+				id    : data.id,
+				email : data.email,
+				token : data.api_token,
+			}
 		}
 	}
 }
