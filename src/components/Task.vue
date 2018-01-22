@@ -5,13 +5,33 @@
 				<h1 class="title is-gray">
 					Create Form
 				</h1>
-				
 			</article>
 			<article v-if="!createForm" class="tile is-child notification">
 				<h1 class="title is-gray">{{activeTask.name}}</h1>
 				<p class="is-gray">
 					{{activeTask.description}} 
 				</p>
+				<table class="table">
+					<thead>
+						<tr>
+							<th>Index</th>
+							<th>Started</th>
+							<th>Stopped</th>
+						</tr>
+					</thead>
+						<tbody>
+							<tr v-for="entry in timeEntries">
+								<td>{{entry.id}}</td>
+								<td>{{entry.started}}</td>
+								<td>{{entry.stopped}}</td>
+							</tr>
+							<tr v-if="timeEntries.length == 0">
+								<td></td>
+								<td>No Entries</td>
+								<td></td>
+							</tr>
+						</tbody>
+				</table>
 			</article>
 		</div>
 		<div class="tile is-vertical is-parent">
@@ -54,6 +74,8 @@
 			return {
 				tasks : [],
 				activeTask : {},
+				timeEntries: [], 
+				currentEntry: {},
 				createForm : true
 			}
 		},
@@ -78,6 +100,16 @@
 			selectTask(task){
 				this.activeTask = task;
 				this.createForm = false;
+				this.fetchEntries(task.id)
+			},
+			fetchEntries(taskId){
+				axios.post("http://back.vuetodo.com/api/tasks/entries",{task_id : taskId}, {
+					headers:{'Authorization' : 'Bearer ' + window.user.token}
+				}).then(function(response){
+					this.timeEntries = response.data;
+				}.bind(this)).catch(function(err){
+					console.log(err);
+				});
 			}
 		}
 	}
