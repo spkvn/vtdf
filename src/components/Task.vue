@@ -14,6 +14,10 @@
 				<button class="button" v-if="!timerRunning" @click="startTimer(activeTask.id)">
 					Start Timer
 				</button>
+				<button class="is-danger button" 
+					 	v-if="timerRunning" @click="stopTimer(activeTask.id)">
+					Stop Timer
+				</button>
 				<table class="table">
 					<thead>
 						<tr>
@@ -107,7 +111,6 @@
 		},
 		methods : {
 			elapsed(start, stop){
-				console.log(stop)
 				if(stop !== null){
 					var startDate = Date.parse(start);
 
@@ -133,6 +136,11 @@
 					headers:{'Authorization' : 'Bearer ' + window.user.token}
 				}).then(function(response){
 					this.timeEntries = response.data;
+					for(var i = 0; i < Object.keys(this.timeEntries).length; i++){
+						if(this.timeEntries[i].stopped == null){
+							this.timerRunning = true;
+						}
+					}
 				}.bind(this)).catch(function(err){
 					console.log(err);
 				});
@@ -142,9 +150,21 @@
 					{task_id: taskId, startTime: new Date().toISOString().slice(0, 19).replace('T', ' ')},
 					{headers:{'Authorization' : 'Bearer ' + window.user.token}}
 				).then(function(response){
+					this.timerRunning = true;
 					this.fetchEntries(taskId);
 				}.bind(this)).catch(function(error){
 					console.log(error);
+				});
+			},
+			stopTimer(taskId){
+				axios.post("http://back.vuetodo.com/api/tasks/entries/stop",
+					{task_id: taskId, stopTime: new Date().toISOString().slice(0, 19).replace('T', ' ')},
+					{headers:{'Authorization' : 'Bearer ' + window.user.token}}
+				).then(function(response){
+					this.timerRunning = false;
+					this.fetchEntries(taskId);
+				}.bind(this)).catch(function(errors){
+					console.log(errors);
 				});
 			}
 		}
