@@ -11,6 +11,9 @@
 				<p class="is-gray">
 					{{activeTask.description}} 
 				</p>
+				<button class="button" v-if="!timerRunning" @click="startTimer(activeTask.id)">
+					Start Timer
+				</button>
 				<table class="table">
 					<thead>
 						<tr>
@@ -76,7 +79,8 @@
 				activeTask : {},
 				timeEntries: [], 
 				currentEntry: {},
-				createForm : true
+				createForm : true,
+				timerRunning: false
 			}
 		},
 		mounted(){
@@ -109,6 +113,17 @@
 					this.timeEntries = response.data;
 				}.bind(this)).catch(function(err){
 					console.log(err);
+				});
+			},
+			startTimer(taskId){
+				// console.log("Starting timer for task: "+taskId);
+				axios.post("http://back.vuetodo.com/api/tasks/entries/create",
+					{task_id: taskId, startTime: new Date().toISOString().slice(0, 19).replace('T', ' ')},
+					{headers:{'Authorization' : 'Bearer ' + window.user.token}}
+				).then(function(response){
+					console.log(response);
+				}).catch(function(error){
+					console.log(error);
 				});
 			}
 		}
