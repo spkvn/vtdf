@@ -20,6 +20,7 @@
 							<th>Index</th>
 							<th>Started</th>
 							<th>Stopped</th>
+							<th>Elapsed</th>
 						</tr>
 					</thead>
 						<tbody>
@@ -27,6 +28,7 @@
 								<td>{{entry.id}}</td>
 								<td>{{entry.started}}</td>
 								<td>{{entry.stopped}}</td>
+								<td>{{elapsed(entry.started, entry.stopped)}}</td>
 							</tr>
 							<tr v-if="timeEntries.length == 0">
 								<td></td>
@@ -83,6 +85,9 @@
 				timerRunning: false
 			}
 		},
+		computed:{
+			
+		},
 		mounted(){
 			//get all user tasks
 			if(window.hasOwnProperty('user')){
@@ -101,6 +106,23 @@
 			}
 		},
 		methods : {
+			elapsed(start, stop){
+				console.log(stop)
+				if(stop !== null){
+					var startDate = Date.parse(start);
+
+					var stopDate  = Date.parse(stop);
+					
+					var hours = Math.round(Math.abs(startDate - stopDate) / (1000*60*60));
+					if(hours > 0){
+						return hours + " Hours";
+					} else {
+						return Math.round(Math.abs(startDate - stopDate) / (1000*60)) +" Mins";
+					}	
+				}else { 
+					return "";
+				}
+			},
 			selectTask(task){
 				this.activeTask = task;
 				this.createForm = false;
@@ -116,13 +138,12 @@
 				});
 			},
 			startTimer(taskId){
-				// console.log("Starting timer for task: "+taskId);
 				axios.post("http://back.vuetodo.com/api/tasks/entries/create",
 					{task_id: taskId, startTime: new Date().toISOString().slice(0, 19).replace('T', ' ')},
 					{headers:{'Authorization' : 'Bearer ' + window.user.token}}
 				).then(function(response){
-					console.log(response);
-				}).catch(function(error){
+					this.fetchEntries(taskId);
+				}.bind(this)).catch(function(error){
 					console.log(error);
 				});
 			}
